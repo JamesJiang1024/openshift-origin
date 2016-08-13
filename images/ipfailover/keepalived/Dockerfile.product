@@ -1,0 +1,23 @@
+#
+# VIP failover monitoring container for OpenShift Origin.
+#
+# ImageName: openshift3/ose-keepalived-ipfailover
+#
+FROM openshift3/ose-base:v3.1.1.901
+
+LABEL BZComponent="openshift-enterprise-keepalived-ipfailover-docker"
+LABEL Name="openshift3/ose-keepalived-ipfailover"
+LABEL Version="v3.1.1.901"
+LABEL Release="1"
+LABEL Architecture="x86_64"
+
+RUN yum -y install kmod keepalived iproute psmisc nc net-tools && \
+    yum clean all
+
+ADD conf/ /var/lib/origin/ipfailover/keepalived/conf/
+ADD lib/  /var/lib/origin/ipfailover/keepalived/lib/
+ADD bin/  /var/lib/origin/ipfailover/keepalived/bin/
+ADD monitor.sh /var/lib/origin/ipfailover/keepalived/
+
+EXPOSE 1985
+ENTRYPOINT ["/var/lib/origin/ipfailover/keepalived/monitor.sh"]

@@ -1,0 +1,21 @@
+#
+# This is the official OpenShift Origin pod infrastructure image. It will stay running
+# until terminated by a signal and is the heart of each running pod. It holds on to
+# the network and IPC namespaces as containers come and go during the lifetime of the
+# pod.
+#
+# The standard name for this image is openshift3/ose-pod
+#
+# Pulp can't handle the scratch later currently
+FROM rhel7:latest
+
+LABEL BZComponent="openshift-enterprise-pod-docker"
+LABEL Name="openshift3/ose-pod"
+LABEL Version="v3.1.1.901"
+LABEL Release="1"
+LABEL Architecture="x86_64"
+
+RUN yum install -y --enablerepo=rhel-7-server-ose-3.2-rpms atomic-openshift-pod && yum clean all
+RUN ln -s /usr/bin/pod /pod
+
+ENTRYPOINT ["/pod"]
